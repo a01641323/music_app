@@ -5,7 +5,11 @@
       "Bash(npm --version)",
       "Bash(npx --version)",
       "Bash(npx create-next-app@latest . --js --app --tailwind --eslint --src-dir --import-alias \"@/*\" --use-npm)",
-      "Bash(npx shadcn@latest init -d --base-color slate)"
+      "Bash(npx shadcn@latest init -d --base-color slate)",
+      "Bash(npx shadcn@latest add sidebar card calendar popover select dropdown-menu badge avatar separator skeleton table tooltip chart toggle-group scroll-area -y)",
+      "Bash(npm install recharts date-fns lucide-react)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npm install)"
     ]
   }
 }
