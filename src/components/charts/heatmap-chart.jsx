@@ -77,7 +77,7 @@ export function HeatmapChart({ title, description, data, valueLabel = "Activity"
                           className="flex-1 aspect-square rounded-sm cursor-pointer transition-transform hover:scale-110"
                           style={{
                             backgroundColor: interpolateColor(value, min, max),
-                            opacity: 0.2 + 0.8 * ((value - min) / (max - min || 1)),
+                            opacity: 0.4 + 0.6 * ((value - min) / (max - min || 1)),
                           }}
                         />
                       </TooltipTrigger>
@@ -101,7 +101,7 @@ export function HeatmapChart({ title, description, data, valueLabel = "Activity"
                     className="w-3 h-3 rounded-sm"
                     style={{
                       backgroundColor: interpolateColor(v, 0, 100),
-                      opacity: 0.2 + 0.8 * (v / 100),
+                      opacity: 0.4 + 0.6 * (v / 100),
                     }}
                   />
                 ))}
