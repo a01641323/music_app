@@ -85,7 +85,7 @@ export function BarChartCard({
   );
 
   return (
-    <Card>
+    <Card className="glass glass-glow">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}

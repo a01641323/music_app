@@ -31,7 +31,7 @@ export function NavMain({ sections, platformId }) {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Analytics</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-[#5a8a7a]">Analytics</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
           {sections.map((section) => {
@@ -41,11 +41,13 @@ export function NavMain({ sections, platformId }) {
 
             return (
               <SidebarMenuItem key={section.path}>
-                <SidebarMenuButton asChild isActive={isActive}>
-                  <Link href={href}>
-                    <Icon className="size-4" />
-                    <span>{section.name}</span>
-                  </Link>
+                <SidebarMenuButton
+                  render={<Link href={href} />}
+                  isActive={isActive}
+                  className={isActive ? "border-l-[3px] border-[#00ffbe] bg-[rgba(0,255,190,0.05)]" : ""}
+                >
+                  <Icon className="size-4" />
+                  <span>{section.name}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );

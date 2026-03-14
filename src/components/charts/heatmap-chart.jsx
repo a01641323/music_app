@@ -36,7 +36,7 @@ export function HeatmapChart({ title, description, data, valueLabel = "Activity"
   }, [data]);
 
   return (
-    <Card>
+    <Card className="glass glass-glow">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
@@ -72,15 +72,17 @@ export function HeatmapChart({ title, description, data, valueLabel = "Activity"
                 <div className="flex flex-1 gap-0.5">
                   {row.map((value, hourIndex) => (
                     <Tooltip key={hourIndex}>
-                      <TooltipTrigger asChild>
-                        <div
-                          className="flex-1 aspect-square rounded-sm cursor-pointer transition-transform hover:scale-110"
-                          style={{
-                            backgroundColor: interpolateColor(value, min, max),
-                            opacity: 0.4 + 0.6 * ((value - min) / (max - min || 1)),
-                          }}
-                        />
-                      </TooltipTrigger>
+                      <TooltipTrigger
+                        render={
+                          <div
+                            className="flex-1 aspect-square rounded-sm cursor-pointer transition-transform hover:scale-110"
+                            style={{
+                              backgroundColor: interpolateColor(value, min, max),
+                              opacity: 0.4 + 0.6 * ((value - min) / (max - min || 1)),
+                            }}
+                          />
+                        }
+                      />
                       <TooltipContent>
                         <p className="text-xs">
                           {dayLabels[dayIndex]} {hourLabels[hourIndex]}: {valueLabel} {value}

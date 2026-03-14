@@ -27,7 +27,7 @@ export function AreaChartCard({
   );
 
   return (
-    <Card>
+    <Card className="glass glass-glow">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
@@ -64,7 +64,7 @@ export function AreaChartCard({
                     <stop
                       offset="5%"
                       stopColor={`var(--color-${key})`}
-                      stopOpacity={0.4}
+                      stopOpacity={0.3}
                     />
                     <stop
                       offset="95%"
@@ -89,6 +89,7 @@ export function AreaChartCard({
                 }
                 fillOpacity={gradient ? 1 : 0.1}
                 strokeWidth={2}
+                animationDuration={1200}
               />
             ))}
           </AreaChart>
