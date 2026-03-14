@@ -17,8 +17,8 @@ export function DateRangeFilter() {
     useDateRange();
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex gap-1 bg-[rgba(255,255,255,0.03)] p-1 rounded-lg">
+    <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+      <div className="flex gap-1 bg-[rgba(255,255,255,0.03)] p-1 rounded-lg shrink-0">
         {presets.map((preset) => (
           <button
             key={preset.value}

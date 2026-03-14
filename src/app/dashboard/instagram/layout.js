@@ -7,7 +7,7 @@ import { DateRangeFilter } from "@/components/layout/date-range-filter";
 export default function InstagramLayout({ children }) {
   return (
     <DateRangeProvider>
-      <div className="flex items-center justify-between px-4 pt-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-2">
         <TabNavigation />
         <DateRangeFilter />
       </div>

@@ -100,22 +100,27 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply text-foreground;
-    background-color: #020a07;
+  html::before {
+    content: '';
+    position: fixed;
+    inset: 0;
     background-image: url('/crown.jpg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
+    z-index: -2;
   }
-  body::before {
+  html::after {
     content: '';
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.72);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    z-index: 0;
+    z-index: -1;
+  }
+  body {
+    @apply text-foreground;
+    background-color: transparent;
   }
   html {
     font-family: var(--font-mono), ui-monospace, monospace;
@@ -208,5 +213,26 @@
   }
   75% {
     height: 80%;
+  }
+}
+
+/* === SCROLLBAR HIDE === */
+.scrollbar-none {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* === CHART TOUCH (global — all viewports) === */
+[data-slot="chart"] svg {
+  touch-action: pan-x;
+}
+
+/* === MOBILE RESPONSIVE === */
+@media (max-width: 768px) {
+  .glass-hover:hover {
+    transform: none;
   }
 }
