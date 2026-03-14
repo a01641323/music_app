@@ -43,7 +43,7 @@ export function MetricCard({ title, value, change, changeLabel, icon: Icon }) {
             value
           )}
         </div>
-        {change !== undefined && (
+        {change != null && (
           <TrendIndicator value={change} label={changeLabel} />
         )}
       </CardContent>

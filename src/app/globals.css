@@ -236,3 +236,51 @@
     transform: none;
   }
 }
+
+/* === TIKTOK PLATFORM PALETTE === */
+[data-platform="tiktok"] {
+  --platform-primary: #25f4ee;
+  --platform-secondary: #fe2c55;
+  --platform-accent: #010101;
+}
+
+[data-platform="tiktok"] .tab-active {
+  background: linear-gradient(135deg, #25f4ee22, #fe2c5522);
+  color: #25f4ee;
+  border: 1px solid rgba(37, 244, 238, 0.4);
+  text-shadow: 0 0 12px rgba(37, 244, 238, 0.5);
+}
+
+[data-platform="tiktok"] .tab-inactive {
+  color: rgba(37, 244, 238, 0.45);
+  border: 1px solid transparent;
+}
+
+[data-platform="tiktok"] .tab-inactive:hover {
+  color: #25f4ee;
+  background: rgba(37, 244, 238, 0.06);
+}
+
+/* === SPOTIFY PLATFORM PALETTE === */
+[data-platform="spotify"] {
+  --platform-primary: #1db954;
+  --platform-secondary: #1ed760;
+  --platform-accent: #121212;
+}
+
+[data-platform="spotify"] .tab-active {
+  background: linear-gradient(135deg, #1db95422, #1ed76022);
+  color: #1ed760;
+  border: 1px solid rgba(29, 185, 84, 0.4);
+  text-shadow: 0 0 12px rgba(30, 215, 96, 0.4);
+}
+
+[data-platform="spotify"] .tab-inactive {
+  color: rgba(29, 185, 84, 0.5);
+  border: 1px solid transparent;
+}
+
+[data-platform="spotify"] .tab-inactive:hover {
+  color: #1ed760;
+  background: rgba(29, 185, 84, 0.06);
+}

@@ -13,17 +13,27 @@ export const platforms = [
     ],
   },
   {
-    id: "spotify",
-    name: "Spotify",
-    icon: "Music",
-    connected: false,
-    sections: [],
-  },
-  {
     id: "tiktok",
     name: "TikTok",
     icon: "Video",
-    connected: false,
-    sections: [],
+    connected: true,
+    sections: [
+      { name: "Overview", path: "overview", icon: "LayoutDashboard" },
+      { name: "Performance", path: "performance", icon: "TrendingUp" },
+      { name: "Retention", path: "retention", icon: "Clock" },
+      { name: "Audience", path: "audience", icon: "Users" },
+    ],
+  },
+  {
+    id: "spotify",
+    name: "Spotify",
+    icon: "Music",
+    connected: true,
+    sections: [
+      { name: "Overview", path: "overview", icon: "LayoutDashboard" },
+      { name: "Tracks", path: "tracks", icon: "Music" },
+      { name: "Audience", path: "audience", icon: "Users" },
+      { name: "Playlists", path: "playlists", icon: "ListMusic" },
+    ],
   },
 ];

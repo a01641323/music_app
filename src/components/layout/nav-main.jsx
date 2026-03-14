@@ -8,6 +8,12 @@ import {
   Film,
   Circle,
   Users,
+  TrendingUp,
+  Clock,
+  Music,
+  ListMusic,
+  Video,
+  BookOpen,
 } from "lucide-react";
 import {
   SidebarGroup,
@@ -24,6 +30,12 @@ const iconMap = {
   Film,
   Circle,
   Users,
+  TrendingUp,
+  Clock,
+  Music,
+  ListMusic,
+  Video,
+  BookOpen,
 };
 
 export function NavMain({ sections, platformId }) {
@@ -35,7 +47,7 @@ export function NavMain({ sections, platformId }) {
       <SidebarGroupContent>
         <SidebarMenu>
           {sections.map((section) => {
-            const Icon = iconMap[section.icon];
+            const Icon = iconMap[section.icon] ?? Circle;
             const href = `/dashboard/${platformId}/${section.path}`;
             const isActive = pathname.includes(`/${section.path}`);
 

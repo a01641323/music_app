@@ -2,6 +2,7 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function TrendIndicator({ value, label }) {
+  if (value == null) return null;
   const isPositive = value >= 0;
 
   return (
