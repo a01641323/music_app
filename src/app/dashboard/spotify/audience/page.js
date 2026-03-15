@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Headphones, Radio, Star, UserPlus } from "lucide-react";
+import { Radio, Star } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getSpotifyMetrics } from "@/services/spotify";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
@@ -22,20 +22,6 @@ export default function SpotifyAudiencePage() {
   const data = useMemo(() => getSpotifyMetrics(dateRange), [dateRange]);
 
   const metrics = [
-    {
-      title: "Followers Gained",
-      value: formatNumber(data.summary.totalFollowersGained),
-      change: data.summary.totalFollowersGainedChange,
-      changeLabel: "vs prev period",
-      icon: UserPlus,
-    },
-    {
-      title: "Monthly Listeners",
-      value: formatNumber(data.summary.currentMonthlyListeners),
-      change: data.summary.currentMonthlyListenersChange,
-      changeLabel: "vs prev period",
-      icon: Headphones,
-    },
     {
       title: "Active Listeners",
       value: formatNumber(data.summary.currentMonthlyActive),

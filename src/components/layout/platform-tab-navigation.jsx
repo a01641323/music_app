@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 /**
- * Generic tab navigation for non-Instagram platforms.
- * Accepts tabs and platform-specific active/hover color tokens via CSS vars
- * set by the [data-platform] wrapper in each platform layout.
+ * Generic tab navigation for all platforms.
+ * TikTok/Spotify: active/inactive styling comes from [data-platform] CSS in globals.css.
+ * Instagram: passes explicit Tailwind classes via activeClass/inactiveClass props
+ * to bypass CSS-scoping and guarantee the active state renders.
  */
-export function PlatformTabNavigation({ tabs, platformId }) {
+export function PlatformTabNavigation({ tabs, platformId, activeClass, inactiveClass }) {
   const pathname = usePathname();
 
   return (
@@ -23,7 +24,7 @@ export function PlatformTabNavigation({ tabs, platformId }) {
             href={href}
             className={cn(
               "px-4 py-2 text-sm font-medium transition-all duration-200 rounded-md whitespace-nowrap shrink-0",
-              isActive ? "tab-active" : "tab-inactive"
+              isActive ? (activeClass ?? "tab-active") : (inactiveClass ?? "tab-inactive")
             )}
           >
             {tab.name}
