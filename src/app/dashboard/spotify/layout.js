@@ -6,8 +6,8 @@ import { DateRangeFilter } from "@/components/layout/date-range-filter";
 
 const tabs = [
   { name: "Overview", path: "overview" },
-  { name: "Tracks", path: "tracks" },
   { name: "Audience", path: "audience" },
+  { name: "Tracks", path: "tracks" },
 ];
 
 export default function SpotifyLayout({ children }) {
