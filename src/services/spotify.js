@@ -1,11 +1,8 @@
 import { subDays, parseISO, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import {
   accountMetricsDaily,
-  tracksData,
-  listenerCountries,
-  listenerCities,
-  audienceAgeGender,
-  playlistsData,
+  songsTimeline,
+  trackNames,
 } from "@/data/spotify";
 
 function isInRange(dateStr, from, to) {
@@ -31,6 +28,8 @@ function percentageChange(current, previous) {
 
 /**
  * Get Spotify account metrics filtered to a date range.
+ * Fields from CSV: listeners, monthly_listeners, monthly_active_listeners,
+ * super_listeners, streams, playlist_adds, saves, followers.
  */
 export function getSpotifyMetrics({ from, to }) {
   const daily = accountMetricsDaily.filter((entry) =>
@@ -42,25 +41,28 @@ export function getSpotifyMetrics({ from, to }) {
     isInRange(entry.date, prevFrom, prevTo)
   );
 
-  const currentFollowers = daily.length > 0 ? daily[daily.length - 1].followers : 0;
-  const currentMonthlyListeners = daily.length > 0 ? daily[daily.length - 1].monthly_listeners : 0;
+  // Snapshot values — take last entry in range
+  const last = daily.length > 0 ? daily[daily.length - 1] : {};
+  const prevLast = previousDaily.length > 0 ? previousDaily[previousDaily.length - 1] : {};
+
+  const currentFollowers = last.followers ?? 0;
+  const currentMonthlyListeners = last.monthly_listeners ?? 0;
+  const currentMonthlyActive = last.monthly_active_listeners ?? 0;
+  const currentSuperListeners = last.super_listeners ?? 0;
+
+  const prevFollowers = prevLast.followers ?? 0;
+  const prevMonthlyListeners = prevLast.monthly_listeners ?? 0;
+  const prevMonthlyActive = prevLast.monthly_active_listeners ?? 0;
+  const prevSuperListeners = prevLast.super_listeners ?? 0;
+
+  // Cumulative values — sum over the range
   const totalStreams = daily.reduce((sum, d) => sum + d.streams, 0);
   const totalSaves = daily.reduce((sum, d) => sum + d.saves, 0);
   const totalPlaylistAdds = daily.reduce((sum, d) => sum + d.playlist_adds, 0);
-  const followersGained = daily.reduce((sum, d) => sum + d.followers_gained, 0);
-  const followersLost = daily.reduce((sum, d) => sum + d.followers_lost, 0);
-  const avgSkipRate =
-    daily.length > 0
-      ? Math.round((daily.reduce((sum, d) => sum + d.skip_rate, 0) / daily.length) * 10) / 10
-      : 0;
 
-  const prevFollowers = previousDaily.length > 0 ? previousDaily[previousDaily.length - 1].followers : 0;
-  const prevMonthlyListeners = previousDaily.length > 0 ? previousDaily[previousDaily.length - 1].monthly_listeners : 0;
   const prevTotalStreams = previousDaily.reduce((sum, d) => sum + d.streams, 0);
   const prevTotalSaves = previousDaily.reduce((sum, d) => sum + d.saves, 0);
   const prevTotalPlaylistAdds = previousDaily.reduce((sum, d) => sum + d.playlist_adds, 0);
-  const prevFollowersGained = previousDaily.reduce((sum, d) => sum + d.followers_gained, 0);
-  const prevFollowersLost = previousDaily.reduce((sum, d) => sum + d.followers_lost, 0);
 
   return {
     daily,
@@ -69,63 +71,40 @@ export function getSpotifyMetrics({ from, to }) {
       currentFollowersChange: percentageChange(currentFollowers, prevFollowers),
       currentMonthlyListeners,
       currentMonthlyListenersChange: percentageChange(currentMonthlyListeners, prevMonthlyListeners),
+      currentMonthlyActive,
+      currentMonthlyActiveChange: percentageChange(currentMonthlyActive, prevMonthlyActive),
+      currentSuperListeners,
+      currentSuperListenersChange: percentageChange(currentSuperListeners, prevSuperListeners),
       totalStreams,
       totalStreamsChange: percentageChange(totalStreams, prevTotalStreams),
       totalSaves,
       totalSavesChange: percentageChange(totalSaves, prevTotalSaves),
       totalPlaylistAdds,
       totalPlaylistAddsChange: percentageChange(totalPlaylistAdds, prevTotalPlaylistAdds),
-      followersGained,
-      followersGainedChange: percentageChange(followersGained, prevFollowersGained),
-      followersLost,
-      followersLostChange: percentageChange(followersLost, prevFollowersLost),
-      avgSkipRate,
     },
   };
 }
 
 /**
- * Get Spotify tracks filtered to a date range.
+ * Get Spotify tracks data filtered to a date range.
+ * Uses songsTimeline (one row per day, one column per track).
+ * Returns:
+ *   timeline  — filtered daily rows (for multi-line chart)
+ *   totals    — per-track stream totals in the period, sorted desc
+ *   trackNames — ordered list of track names
  */
 export function getSpotifyTracks({ from, to }) {
-  const tracks = tracksData.filter((t) => isInRange(t.releasedAt, from, to));
+  const timeline = songsTimeline.filter((row) =>
+    isInRange(row.date, from, to)
+  );
 
-  const totalTracks = tracks.length;
-  const totalStreams = tracks.reduce((sum, t) => sum + t.streams, 0);
-  const totalSaves = tracks.reduce((sum, t) => sum + t.saves, 0);
-  const totalPlaylistAdds = tracks.reduce((sum, t) => sum + t.playlist_adds, 0);
-  const avgSkipRate =
-    totalTracks > 0
-      ? Math.round((tracks.reduce((sum, t) => sum + t.skip_rate, 0) / totalTracks) * 10) / 10
-      : 0;
-  const avgPopularity =
-    totalTracks > 0
-      ? Math.round(tracks.reduce((sum, t) => sum + t.popularity, 0) / totalTracks)
-      : 0;
+  // Compute per-track totals within the selected date range
+  const totals = trackNames
+    .map((name) => ({
+      name,
+      streams: timeline.reduce((sum, row) => sum + (row[name] ?? 0), 0),
+    }))
+    .sort((a, b) => b.streams - a.streams);
 
-  return {
-    tracks,
-    summary: {
-      totalTracks,
-      totalStreams,
-      totalSaves,
-      totalPlaylistAdds,
-      avgSkipRate,
-      avgPopularity,
-    },
-  };
-}
-
-/**
- * Get Spotify audience data (static, no date filtering).
- */
-export function getSpotifyAudience() {
-  return { listenerCountries, listenerCities, audienceAgeGender };
-}
-
-/**
- * Get Spotify playlist placements (static).
- */
-export function getSpotifyPlaylists() {
-  return { playlistsData };
+  return { timeline, totals, trackNames };
 }

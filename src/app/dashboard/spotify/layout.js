@@ -8,7 +8,6 @@ const tabs = [
   { name: "Overview", path: "overview" },
   { name: "Tracks", path: "tracks" },
   { name: "Audience", path: "audience" },
-  { name: "Playlists", path: "playlists" },
 ];
 
 export default function SpotifyLayout({ children }) {

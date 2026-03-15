@@ -22,6 +22,11 @@ const savesPlaylistConfig = {
   playlist_adds: { label: "Playlist Adds", color: "#1ed760" },
 };
 
+const activeVsSuperConfig = {
+  monthly_active_listeners: { label: "Active Listeners", color: "#1db954" },
+  super_listeners: { label: "Super Listeners", color: "#1ed760" },
+};
+
 const dateFormatter = (value) =>
   new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
@@ -77,6 +82,12 @@ export default function SpotifyOverviewPage() {
     playlist_adds: d.playlist_adds,
   }));
 
+  const activeVsSuperData = data.daily.map((d) => ({
+    date: d.date,
+    monthly_active_listeners: d.monthly_active_listeners,
+    super_listeners: d.super_listeners,
+  }));
+
   return (
     <div className="space-y-4">
       <MetricCardGrid metrics={metrics} />
@@ -102,16 +113,26 @@ export default function SpotifyOverviewPage() {
         />
       </div>
 
-      <LineChartCard
-        title="Saves & Playlist Adds"
-        description="Daily saves and playlist additions"
-        data={savesPlaylistData}
-        chartConfig={savesPlaylistConfig}
-        dataKeys={["saves", "playlist_adds"]}
-        xAxisKey="date"
-        xAxisFormatter={dateFormatter}
-        showLegend
-      />
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <LineChartCard
+          title="Saves & Playlist Adds"
+          description="Daily saves and playlist additions"
+          data={savesPlaylistData}
+          chartConfig={savesPlaylistConfig}
+          dataKeys={["saves", "playlist_adds"]}
+          xAxisKey="date"
+          xAxisFormatter={dateFormatter}
+        />
+        <LineChartCard
+          title="Active vs Super Listeners"
+          description="Monthly active listeners and super listeners over time"
+          data={activeVsSuperData}
+          chartConfig={activeVsSuperConfig}
+          dataKeys={["monthly_active_listeners", "super_listeners"]}
+          xAxisKey="date"
+          xAxisFormatter={dateFormatter}
+        />
+      </div>
     </div>
   );
 }

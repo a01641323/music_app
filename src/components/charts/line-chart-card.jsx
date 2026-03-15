@@ -6,6 +6,8 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
 } from "@/components/ui/chart";
 
 export function LineChartCard({
@@ -18,6 +20,7 @@ export function LineChartCard({
   height = "min-h-[300px]",
   referenceLine,
   xAxisFormatter,
+  showLegend = false,
 }) {
   return (
     <Card className="glass glass-glow">
@@ -50,6 +53,9 @@ export function LineChartCard({
                 strokeDasharray="3 3"
                 label={referenceLine.label}
               />
+            )}
+            {showLegend && (
+              <ChartLegend content={<ChartLegendContent />} />
             )}
             {dataKeys.map((key) => (
               <Line

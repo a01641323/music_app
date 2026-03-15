@@ -1,11 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { Play, Heart, Share2, Eye } from "lucide-react";
+import { Play, Heart, Share2, UserPlus } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
-import { getTikTokMetrics, getTikTokVideos } from "@/services/tiktok";
+import { getTikTokMetrics } from "@/services/tiktok";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
-import { BarChartCard } from "@/components/charts/bar-chart-card";
 import { AreaChartCard } from "@/components/charts/area-chart-card";
 import { formatNumber } from "@/lib/format";
 
@@ -18,10 +17,6 @@ const engagementConfig = {
   share_count: { label: "Shares", color: "#25f4ee" },
 };
 
-const topVideosConfig = {
-  play_count: { label: "Plays", color: "#25f4ee" },
-};
-
 const dateFormatter = (value) =>
   new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
@@ -29,7 +24,6 @@ export default function TikTokPerformancePage() {
   const { dateRange } = useDateRange();
 
   const data = useMemo(() => getTikTokMetrics(dateRange), [dateRange]);
-  const videosData = useMemo(() => getTikTokVideos(dateRange), [dateRange]);
 
   const metrics = [
     {
@@ -54,11 +48,11 @@ export default function TikTokPerformancePage() {
       icon: Share2,
     },
     {
-      title: "Total Reach",
-      value: formatNumber(data.summary.totalReach),
-      change: data.summary.totalReachChange,
+      title: "Followers Gained",
+      value: formatNumber(data.summary.totalFollowersGained),
+      change: data.summary.totalFollowersGainedChange,
       changeLabel: "vs prev period",
-      icon: Eye,
+      icon: UserPlus,
     },
   ];
 
@@ -72,14 +66,6 @@ export default function TikTokPerformancePage() {
     like_count: d.like_count,
     share_count: d.share_count,
   }));
-
-  const topVideos = [...videosData.videos]
-    .sort((a, b) => b.play_count - a.play_count)
-    .slice(0, 10)
-    .map((v) => ({
-      name: v.caption.slice(0, 20),
-      play_count: v.play_count,
-    }));
 
   return (
     <div className="space-y-4">
@@ -106,16 +92,6 @@ export default function TikTokPerformancePage() {
           showLegend
         />
       </div>
-
-      <BarChartCard
-        title="Top Videos by Plays"
-        description="Best performing videos in the selected period"
-        data={topVideos}
-        chartConfig={topVideosConfig}
-        dataKeys={["play_count"]}
-        xAxisKey="name"
-        showLegend={false}
-      />
     </div>
   );
 }

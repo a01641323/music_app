@@ -1,5 +1,10 @@
 import { subDays, parseISO, isWithinInterval, startOfDay, endOfDay } from "date-fns";
-import { accountMetricsDaily, videosData, audienceCountries, audienceGendersAge } from "@/data/tiktok";
+import {
+  accountMetricsDaily,
+  audienceCountries,
+  audienceGender,
+  audienceActivity,
+} from "@/data/tiktok";
 
 function isInRange(dateStr, from, to) {
   const date = parseISO(dateStr.split("T")[0]);
@@ -23,7 +28,10 @@ function percentageChange(current, previous) {
 }
 
 /**
- * Get TikTok account metrics filtered to a date range.
+ * Get TikTok metrics filtered to a date range.
+ * Fields from CSV: follower_count (cumulative), followers_gained (daily diff),
+ * play_count (views), like_count, comment_count, share_count,
+ * viewers_total, viewers_new, viewers_returning.
  */
 export function getTikTokMetrics({ from, to }) {
   const daily = accountMetricsDaily.filter((entry) =>
@@ -35,32 +43,24 @@ export function getTikTokMetrics({ from, to }) {
     isInRange(entry.date, prevFrom, prevTo)
   );
 
-  const currentFollowers = daily.length > 0 ? daily[daily.length - 1].follower_count : 0;
+  // Use last non-zero follower_count (0 = missing/NA in CSV)
+  const lastWithFollowers = [...daily].reverse().find((d) => d.follower_count > 0);
+  const currentFollowers = lastWithFollowers?.follower_count ?? 0;
   const totalPlayCount = daily.reduce((sum, d) => sum + d.play_count, 0);
-  const totalVideoViews = daily.reduce((sum, d) => sum + d.video_views, 0);
-  const totalReach = daily.reduce((sum, d) => sum + d.reach, 0);
   const totalLikes = daily.reduce((sum, d) => sum + d.like_count, 0);
   const totalComments = daily.reduce((sum, d) => sum + d.comment_count, 0);
   const totalShares = daily.reduce((sum, d) => sum + d.share_count, 0);
-  const followersGained = daily.reduce((sum, d) => sum + d.followers_gained, 0);
-  const followersLost = daily.reduce((sum, d) => sum + d.followers_lost, 0);
-  const avgWatchTime =
-    daily.length > 0
-      ? Math.round((daily.reduce((sum, d) => sum + d.average_watch_time, 0) / daily.length) * 10) / 10
-      : 0;
-  const avgFullWatchRate =
-    daily.length > 0
-      ? Math.round((daily.reduce((sum, d) => sum + d.full_video_watched_rate, 0) / daily.length) * 10) / 10
-      : 0;
+  const totalFollowersGained = daily.reduce((sum, d) => sum + d.followers_gained, 0);
+  const totalViewersNew = daily.reduce((sum, d) => sum + d.viewers_new, 0);
+  const totalViewersTotal = daily.reduce((sum, d) => sum + d.viewers_total, 0);
 
-  const prevFollowers = previousDaily.length > 0 ? previousDaily[previousDaily.length - 1].follower_count : 0;
+  const prevLastWithFollowers = [...previousDaily].reverse().find((d) => d.follower_count > 0);
+  const prevFollowers = prevLastWithFollowers?.follower_count ?? 0;
   const prevTotalPlayCount = previousDaily.reduce((sum, d) => sum + d.play_count, 0);
-  const prevTotalVideoViews = previousDaily.reduce((sum, d) => sum + d.video_views, 0);
-  const prevTotalReach = previousDaily.reduce((sum, d) => sum + d.reach, 0);
   const prevTotalLikes = previousDaily.reduce((sum, d) => sum + d.like_count, 0);
   const prevTotalShares = previousDaily.reduce((sum, d) => sum + d.share_count, 0);
-  const prevFollowersGained = previousDaily.reduce((sum, d) => sum + d.followers_gained, 0);
-  const prevFollowersLost = previousDaily.reduce((sum, d) => sum + d.followers_lost, 0);
+  const prevTotalFollowersGained = previousDaily.reduce((sum, d) => sum + d.followers_gained, 0);
+  const prevTotalViewersNew = previousDaily.reduce((sum, d) => sum + d.viewers_new, 0);
 
   return {
     daily,
@@ -69,60 +69,26 @@ export function getTikTokMetrics({ from, to }) {
       currentFollowersChange: percentageChange(currentFollowers, prevFollowers),
       totalPlayCount,
       totalPlayCountChange: percentageChange(totalPlayCount, prevTotalPlayCount),
-      totalVideoViews,
-      totalVideoViewsChange: percentageChange(totalVideoViews, prevTotalVideoViews),
-      totalReach,
-      totalReachChange: percentageChange(totalReach, prevTotalReach),
       totalLikes,
       totalLikesChange: percentageChange(totalLikes, prevTotalLikes),
       totalComments,
       totalShares,
       totalSharesChange: percentageChange(totalShares, prevTotalShares),
-      followersGained,
-      followersGainedChange: percentageChange(followersGained, prevFollowersGained),
-      followersLost,
-      followersLostChange: percentageChange(followersLost, prevFollowersLost),
-      avgWatchTime,
-      avgFullWatchRate,
+      totalFollowersGained,
+      totalFollowersGainedChange: percentageChange(totalFollowersGained, prevTotalFollowersGained),
+      totalViewersNew,
+      totalViewersNewChange: percentageChange(totalViewersNew, prevTotalViewersNew),
+      totalViewersTotal,
     },
   };
 }
 
 /**
- * Get TikTok videos filtered to a date range.
- */
-export function getTikTokVideos({ from, to }) {
-  const videos = videosData.filter((v) => isInRange(v.publishedAt, from, to));
-
-  const totalVideos = videos.length;
-  const totalPlays = videos.reduce((sum, v) => sum + v.play_count, 0);
-  const totalLikes = videos.reduce((sum, v) => sum + v.like_count, 0);
-  const totalShares = videos.reduce((sum, v) => sum + v.share_count, 0);
-  const avgWatchTime =
-    totalVideos > 0
-      ? Math.round((videos.reduce((sum, v) => sum + v.average_watch_time, 0) / totalVideos) * 10) / 10
-      : 0;
-  const avgFullWatchRate =
-    totalVideos > 0
-      ? Math.round((videos.reduce((sum, v) => sum + v.full_video_watched_rate, 0) / totalVideos) * 10) / 10
-      : 0;
-
-  return {
-    videos,
-    summary: {
-      totalVideos,
-      totalPlays,
-      totalLikes,
-      totalShares,
-      avgWatchTime,
-      avgFullWatchRate,
-    },
-  };
-}
-
-/**
- * Get TikTok audience data (static, no date filtering).
+ * Get TikTok audience data — static from CSV (no date filter).
+ * Returns audienceCountries (with full names + percentages),
+ * audienceGender (Male/Female/Other percentages),
+ * audienceActivity (24-hour averaged profile).
  */
 export function getTikTokAudience() {
-  return { audienceCountries, audienceGendersAge };
+  return { audienceCountries, audienceGender, audienceActivity };
 }

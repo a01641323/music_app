@@ -6,9 +6,7 @@ export const platforms = [
     connected: true,
     sections: [
       { name: "Overview", path: "overview", icon: "LayoutDashboard" },
-      { name: "Posts", path: "posts", icon: "Image" },
-      { name: "Reels", path: "reels", icon: "Film" },
-      { name: "Stories", path: "stories", icon: "Circle" },
+      // Posts, Reels, Stories removed — no CSV data source
       { name: "Audience", path: "audience", icon: "Users" },
     ],
   },
@@ -20,7 +18,7 @@ export const platforms = [
     sections: [
       { name: "Overview", path: "overview", icon: "LayoutDashboard" },
       { name: "Performance", path: "performance", icon: "TrendingUp" },
-      { name: "Retention", path: "retention", icon: "Clock" },
+      // Retention removed — no watch_time data in CSV
       { name: "Audience", path: "audience", icon: "Users" },
     ],
   },
@@ -33,7 +31,7 @@ export const platforms = [
       { name: "Overview", path: "overview", icon: "LayoutDashboard" },
       { name: "Tracks", path: "tracks", icon: "Music" },
       { name: "Audience", path: "audience", icon: "Users" },
-      { name: "Playlists", path: "playlists", icon: "ListMusic" },
+      // Playlists removed — no CSV data source
     ],
   },
 ];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users, UserPlus, UserMinus, TrendingUp } from "lucide-react";
+import { Users, UserPlus, Eye } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getTikTokMetrics, getTikTokAudience } from "@/services/tiktok";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
@@ -13,18 +13,26 @@ const countryConfig = {
   percentage: { label: "Audience %", color: "#25f4ee" },
 };
 
-const genderAgeConfig = {
-  female: { label: "Female", color: "#fe2c55" },
-  male: { label: "Male", color: "#25f4ee" },
+const genderConfig = {
+  percentage: { label: "Percentage", color: "#fe2c55" },
 };
 
-const followerChangeConfig = {
-  followers_gained: { label: "Gained", color: "#25f4ee" },
-  followers_lost: { label: "Lost", color: "#fe2c55" },
+const activeHoursConfig = {
+  activeFollowers: { label: "Active Followers", color: "#25f4ee" },
+};
+
+const followersGainedConfig = {
+  followers_gained: { label: "Followers Gained", color: "#25f4ee" },
 };
 
 const dateFormatter = (value) =>
   new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+const hourFormatter = (h) => {
+  const period = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}${period}`;
+};
 
 export default function TikTokAudiencePage() {
   const { dateRange } = useDateRange();
@@ -34,7 +42,7 @@ export default function TikTokAudiencePage() {
 
   const metrics = [
     {
-      title: "Total Followers",
+      title: "Followers",
       value: formatNumber(data.summary.currentFollowers),
       change: data.summary.currentFollowersChange,
       changeLabel: "vs prev period",
@@ -42,24 +50,17 @@ export default function TikTokAudiencePage() {
     },
     {
       title: "Followers Gained",
-      value: formatNumber(data.summary.followersGained),
-      change: data.summary.followersGainedChange,
+      value: formatNumber(data.summary.totalFollowersGained),
+      change: data.summary.totalFollowersGainedChange,
       changeLabel: "vs prev period",
       icon: UserPlus,
     },
     {
-      title: "Followers Lost",
-      value: formatNumber(data.summary.followersLost),
-      change: data.summary.followersLostChange,
+      title: "New Viewers",
+      value: formatNumber(data.summary.totalViewersNew),
+      change: data.summary.totalViewersNewChange,
       changeLabel: "vs prev period",
-      icon: UserMinus,
-    },
-    {
-      title: "Net Growth",
-      value: formatNumber(data.summary.followersGained - data.summary.followersLost),
-      change: data.summary.followersGainedChange - (data.summary.followersLostChange || 0),
-      changeLabel: "vs prev period",
-      icon: TrendingUp,
+      icon: Eye,
     },
   ];
 
@@ -68,16 +69,19 @@ export default function TikTokAudiencePage() {
     percentage: c.percentage,
   }));
 
-  const genderAgeData = audience.audienceGendersAge.map((g) => ({
-    ageRange: g.group,
-    female: g.female,
-    male: g.male,
+  const genderData = audience.audienceGender.map((g) => ({
+    name: g.gender,
+    percentage: g.percentage,
   }));
 
-  const followerChangeData = data.daily.map((d) => ({
+  const activeHoursData = audience.audienceActivity.map((h) => ({
+    hour: h.hour,
+    activeFollowers: h.activeFollowers,
+  }));
+
+  const followerGainData = data.daily.map((d) => ({
     date: d.date,
     followers_gained: d.followers_gained,
-    followers_lost: d.followers_lost,
   }));
 
   return (
@@ -96,27 +100,37 @@ export default function TikTokAudiencePage() {
           showLegend={false}
         />
         <BarChartCard
-          title="Age & Gender Distribution"
-          description="Audience breakdown by age group and gender"
-          data={genderAgeData}
-          chartConfig={genderAgeConfig}
-          dataKeys={["female", "male"]}
-          xAxisKey="ageRange"
-          stacked
-          showLegend
+          title="Gender Distribution"
+          description="Audience breakdown by gender"
+          data={genderData}
+          chartConfig={genderConfig}
+          dataKeys={["percentage"]}
+          xAxisKey="name"
+          showLegend={false}
         />
       </div>
 
-      <AreaChartCard
-        title="Follower Growth Timeline"
-        description="Daily followers gained vs lost"
-        data={followerChangeData}
-        chartConfig={followerChangeConfig}
-        dataKeys={["followers_gained", "followers_lost"]}
-        xAxisKey="date"
-        xAxisFormatter={dateFormatter}
-        showLegend
-      />
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <BarChartCard
+          title="Active Hours"
+          description="Follower activity throughout the day (24-hour average)"
+          data={activeHoursData}
+          chartConfig={activeHoursConfig}
+          dataKeys={["activeFollowers"]}
+          xAxisKey="hour"
+          xAxisFormatter={hourFormatter}
+          showLegend={false}
+        />
+        <AreaChartCard
+          title="Follower Growth Timeline"
+          description="Daily followers gained"
+          data={followerGainData}
+          chartConfig={followersGainedConfig}
+          dataKeys={["followers_gained"]}
+          xAxisKey="date"
+          xAxisFormatter={dateFormatter}
+        />
+      </div>
     </div>
   );
 }

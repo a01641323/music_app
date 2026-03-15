@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users, Play, Eye, TrendingUp } from "lucide-react";
+import { Users, Play, Heart, UserPlus } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getTikTokMetrics } from "@/services/tiktok";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
 import { AreaChartCard } from "@/components/charts/area-chart-card";
-import { BarChartCard } from "@/components/charts/bar-chart-card";
 import { LineChartCard } from "@/components/charts/line-chart-card";
 import { formatNumber } from "@/lib/format";
 
@@ -14,15 +13,13 @@ const followerConfig = {
   follower_count: { label: "Followers", color: "#25f4ee" },
 };
 
-const playsViewsConfig = {
+const playsConfig = {
   play_count: { label: "Plays", color: "#25f4ee" },
-  video_views: { label: "Video Views", color: "#fe2c55" },
 };
 
 const engagementConfig = {
   like_count: { label: "Likes", color: "#fe2c55" },
-  comment_count: { label: "Comments", color: "#25f4ee" },
-  share_count: { label: "Shares", color: "#ffffff" },
+  share_count: { label: "Shares", color: "#25f4ee" },
 };
 
 const dateFormatter = (value) =>
@@ -49,18 +46,18 @@ export default function TikTokOverviewPage() {
       icon: Play,
     },
     {
-      title: "Video Views",
-      value: formatNumber(data.summary.totalVideoViews),
-      change: data.summary.totalVideoViewsChange,
+      title: "Total Likes",
+      value: formatNumber(data.summary.totalLikes),
+      change: data.summary.totalLikesChange,
       changeLabel: "vs prev period",
-      icon: Eye,
+      icon: Heart,
     },
     {
-      title: "Reach",
-      value: formatNumber(data.summary.totalReach),
-      change: data.summary.totalReachChange,
+      title: "Followers Gained",
+      value: formatNumber(data.summary.totalFollowersGained),
+      change: data.summary.totalFollowersGainedChange,
       changeLabel: "vs prev period",
-      icon: TrendingUp,
+      icon: UserPlus,
     },
   ];
 
@@ -69,16 +66,14 @@ export default function TikTokOverviewPage() {
     follower_count: d.follower_count,
   }));
 
-  const playsViewsData = data.daily.map((d) => ({
+  const playsData = data.daily.map((d) => ({
     date: d.date,
     play_count: d.play_count,
-    video_views: d.video_views,
   }));
 
   const engagementData = data.daily.map((d) => ({
     date: d.date,
     like_count: d.like_count,
-    comment_count: d.comment_count,
     share_count: d.share_count,
   }));
 
@@ -97,11 +92,11 @@ export default function TikTokOverviewPage() {
           xAxisFormatter={dateFormatter}
         />
         <AreaChartCard
-          title="Plays vs Video Views"
-          description="Daily plays and video views"
-          data={playsViewsData}
-          chartConfig={playsViewsConfig}
-          dataKeys={["play_count", "video_views"]}
+          title="Daily Plays"
+          description="Play count over the selected period"
+          data={playsData}
+          chartConfig={playsConfig}
+          dataKeys={["play_count"]}
           xAxisKey="date"
           xAxisFormatter={dateFormatter}
         />
@@ -109,13 +104,12 @@ export default function TikTokOverviewPage() {
 
       <LineChartCard
         title="Engagement Over Time"
-        description="Daily likes, comments, and shares"
+        description="Daily likes and shares"
         data={engagementData}
         chartConfig={engagementConfig}
-        dataKeys={["like_count", "comment_count", "share_count"]}
+        dataKeys={["like_count", "share_count"]}
         xAxisKey="date"
         xAxisFormatter={dateFormatter}
-        showLegend
       />
     </div>
   );

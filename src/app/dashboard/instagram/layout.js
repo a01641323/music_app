@@ -1,14 +1,19 @@
 "use client";
 
 import { DateRangeProvider } from "@/context/date-range-context";
-import { TabNavigation } from "@/components/layout/tab-navigation";
+import { PlatformTabNavigation } from "@/components/layout/platform-tab-navigation";
 import { DateRangeFilter } from "@/components/layout/date-range-filter";
+
+const tabs = [
+  { name: "Overview", path: "overview" },
+  { name: "Audience", path: "audience" },
+];
 
 export default function InstagramLayout({ children }) {
   return (
     <DateRangeProvider>
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-2">
-        <TabNavigation />
+        <PlatformTabNavigation tabs={tabs} platformId="instagram" />
         <DateRangeFilter />
       </div>
       <div className="p-4">{children}</div>
