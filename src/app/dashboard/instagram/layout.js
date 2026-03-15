@@ -12,9 +12,9 @@ const tabs = [
 // Explicit Tailwind classes matching the same visual treatment as TikTok/Spotify tabs,
 // using Instagram's emerald palette (#00c896 / #00ffbe).
 const igActiveClass =
-  "bg-[rgba(0,200,150,0.13)] text-[#00ffbe] border border-[rgba(0,200,150,0.4)] [text-shadow:0_0_12px_rgba(0,255,190,0.5)]";
+  "bg-[rgba(225,48,108,0.13)] text-[#E1306C] border border-[rgba(225,48,108,0.4)] [text-shadow:0_0_12px_rgba(131,58,180,0.5)]";
 const igInactiveClass =
-  "text-[rgba(0,200,150,0.5)] border border-transparent hover:text-[#00ffbe] hover:bg-[rgba(0,200,150,0.06)]";
+  "text-[rgba(225,48,108,0.5)] border border-transparent hover:text-[#833AB4] hover:bg-[rgba(225,48,108,0.06)]";
 
 export default function InstagramLayout({ children }) {
   return (
