@@ -6,7 +6,6 @@ import { DateRangeFilter } from "@/components/layout/date-range-filter";
 
 const tabs = [
   { name: "Overview", path: "overview" },
-  { name: "Performance", path: "performance" },
   { name: "Audience", path: "audience" },
 ];
 

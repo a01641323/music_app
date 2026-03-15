@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { UserPlus, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getAccountMetrics, getAudienceData } from "@/services/instagram";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
 import { BarChartCard } from "@/components/charts/bar-chart-card";
-import { AreaChartCard } from "@/components/charts/area-chart-card";
 import { formatNumber } from "@/lib/format";
 
 const ageGenderConfig = {
@@ -22,16 +21,6 @@ const cityConfig = {
   percentage: { label: "Audience %", color: "#E1306C" },
 };
 
-const followersGainedConfig = {
-  followersGained: { label: "Followers Gained", color: "#FCAF45" },
-};
-
-const dateFormatter = (value) =>
-  new Date(value).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
 export default function AudiencePage() {
   const { dateRange } = useDateRange();
 
@@ -43,13 +32,6 @@ export default function AudiencePage() {
   const audienceData = useMemo(() => getAudienceData(), []);
 
   const metrics = [
-    {
-      title: "Followers Gained",
-      value: formatNumber(accountData.summary.totalFollowersGained),
-      change: accountData.summary.totalFollowersGainedChange,
-      changeLabel: "vs prev period",
-      icon: UserPlus,
-    },
     {
       title: "Accounts Engaged",
       value: formatNumber(accountData.summary.totalAccountsEngaged),
@@ -73,11 +55,6 @@ export default function AudiencePage() {
   const cityData = audienceData.topCities.slice(0, 10).map((c) => ({
     name: c.city,
     percentage: c.percentage,
-  }));
-
-  const followersData = accountData.daily.map((d) => ({
-    date: d.date,
-    followersGained: d.followersGained,
   }));
 
   return (
@@ -107,27 +84,16 @@ export default function AudiencePage() {
         />
       </div>
 
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <BarChartCard
-          title="Top Cities"
-          description="Audience percentage by city"
-          data={cityData}
-          chartConfig={cityConfig}
-          dataKeys={["percentage"]}
-          xAxisKey="name"
-          horizontal
-          showLegend={false}
-        />
-        <AreaChartCard
-          title="Daily Followers Gained"
-          description="Net new followers per day"
-          data={followersData}
-          chartConfig={followersGainedConfig}
-          dataKeys={["followersGained"]}
-          xAxisKey="date"
-          xAxisFormatter={dateFormatter}
-        />
-      </div>
+      <BarChartCard
+        title="Top Cities"
+        description="Audience percentage by city"
+        data={cityData}
+        chartConfig={cityConfig}
+        dataKeys={["percentage"]}
+        xAxisKey="name"
+        horizontal
+        showLegend={false}
+      />
     </div>
   );
 }

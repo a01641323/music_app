@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users, Headphones, Music, BookmarkPlus } from "lucide-react";
+import { Headphones, Music, BookmarkPlus, UserPlus } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getSpotifyMetrics } from "@/services/spotify";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
 import { AreaChartCard } from "@/components/charts/area-chart-card";
+import { BarChartCard } from "@/components/charts/bar-chart-card";
 import { LineChartCard } from "@/components/charts/line-chart-card";
 import { formatNumber } from "@/lib/format";
 
@@ -22,9 +23,8 @@ const savesPlaylistConfig = {
   playlist_adds: { label: "Playlist Adds", color: "#1ed760" },
 };
 
-const activeVsSuperConfig = {
-  monthly_active_listeners: { label: "Active Listeners", color: "#1db954" },
-  super_listeners: { label: "Super Listeners", color: "#1ed760" },
+const followersGainedConfig = {
+  followers_gained: { label: "Followers Gained", color: "#1db954" },
 };
 
 const dateFormatter = (value) =>
@@ -37,11 +37,11 @@ export default function SpotifyOverviewPage() {
 
   const metrics = [
     {
-      title: "Followers",
-      value: formatNumber(data.summary.currentFollowers),
-      change: data.summary.currentFollowersChange,
+      title: "Followers Gained",
+      value: formatNumber(data.summary.totalFollowersGained),
+      change: data.summary.totalFollowersGainedChange,
       changeLabel: "vs prev period",
-      icon: Users,
+      icon: UserPlus,
     },
     {
       title: "Monthly Listeners",
@@ -82,10 +82,9 @@ export default function SpotifyOverviewPage() {
     playlist_adds: d.playlist_adds,
   }));
 
-  const activeVsSuperData = data.daily.map((d) => ({
+  const followersGainedData = data.daily.map((d) => ({
     date: d.date,
-    monthly_active_listeners: d.monthly_active_listeners,
-    super_listeners: d.super_listeners,
+    followers_gained: d.followers_gained,
   }));
 
   return (
@@ -123,14 +122,15 @@ export default function SpotifyOverviewPage() {
           xAxisKey="date"
           xAxisFormatter={dateFormatter}
         />
-        <LineChartCard
-          title="Active vs Super Listeners"
-          description="Monthly active listeners and super listeners over time"
-          data={activeVsSuperData}
-          chartConfig={activeVsSuperConfig}
-          dataKeys={["monthly_active_listeners", "super_listeners"]}
+        <BarChartCard
+          title="Daily Followers Gained"
+          description="Net new followers per day"
+          data={followersGainedData}
+          chartConfig={followersGainedConfig}
+          dataKeys={["followers_gained"]}
           xAxisKey="date"
           xAxisFormatter={dateFormatter}
+          showLegend={false}
         />
       </div>
     </div>

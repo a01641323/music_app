@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users, UserPlus, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getTikTokMetrics, getTikTokAudience } from "@/services/tiktok";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
 import { BarChartCard } from "@/components/charts/bar-chart-card";
-import { AreaChartCard } from "@/components/charts/area-chart-card";
 import { formatNumber } from "@/lib/format";
 
 const countryConfig = {
@@ -21,13 +20,6 @@ const activeHoursConfig = {
   activeFollowers: { label: "Active Followers", color: "#25f4ee" },
 };
 
-const followersGainedConfig = {
-  followers_gained: { label: "Followers Gained", color: "#25f4ee" },
-};
-
-const dateFormatter = (value) =>
-  new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-
 const hourFormatter = (h) => {
   const period = h >= 12 ? "PM" : "AM";
   const hour = h % 12 === 0 ? 12 : h % 12;
@@ -41,20 +33,6 @@ export default function TikTokAudiencePage() {
   const audience = useMemo(() => getTikTokAudience(), []);
 
   const metrics = [
-    {
-      title: "Followers",
-      value: formatNumber(data.summary.currentFollowers),
-      change: data.summary.currentFollowersChange,
-      changeLabel: "vs prev period",
-      icon: Users,
-    },
-    {
-      title: "Followers Gained",
-      value: formatNumber(data.summary.totalFollowersGained),
-      change: data.summary.totalFollowersGainedChange,
-      changeLabel: "vs prev period",
-      icon: UserPlus,
-    },
     {
       title: "New Viewers",
       value: formatNumber(data.summary.totalViewersNew),
@@ -77,11 +55,6 @@ export default function TikTokAudiencePage() {
   const activeHoursData = audience.audienceActivity.map((h) => ({
     hour: h.hour,
     activeFollowers: h.activeFollowers,
-  }));
-
-  const followerGainData = data.daily.map((d) => ({
-    date: d.date,
-    followers_gained: d.followers_gained,
   }));
 
   return (
@@ -110,27 +83,16 @@ export default function TikTokAudiencePage() {
         />
       </div>
 
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <BarChartCard
-          title="Active Hours"
-          description="Follower activity throughout the day (24-hour average)"
-          data={activeHoursData}
-          chartConfig={activeHoursConfig}
-          dataKeys={["activeFollowers"]}
-          xAxisKey="hour"
-          xAxisFormatter={hourFormatter}
-          showLegend={false}
-        />
-        <AreaChartCard
-          title="Follower Growth Timeline"
-          description="Daily followers gained"
-          data={followerGainData}
-          chartConfig={followersGainedConfig}
-          dataKeys={["followers_gained"]}
-          xAxisKey="date"
-          xAxisFormatter={dateFormatter}
-        />
-      </div>
+      <BarChartCard
+        title="Active Hours"
+        description="Follower activity throughout the day (24-hour average)"
+        data={activeHoursData}
+        chartConfig={activeHoursConfig}
+        dataKeys={["activeFollowers"]}
+        xAxisKey="hour"
+        xAxisFormatter={hourFormatter}
+        showLegend={false}
+      />
     </div>
   );
 }

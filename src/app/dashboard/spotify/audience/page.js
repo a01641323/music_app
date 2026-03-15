@@ -1,21 +1,16 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users, Headphones, Radio, Star } from "lucide-react";
+import { Headphones, Radio, Star, UserPlus } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getSpotifyMetrics } from "@/services/spotify";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
-import { AreaChartCard } from "@/components/charts/area-chart-card";
 import { LineChartCard } from "@/components/charts/line-chart-card";
 import { formatNumber } from "@/lib/format";
 
 const activeVsSuperConfig = {
   monthly_active_listeners: { label: "Active Listeners", color: "#1db954" },
   super_listeners: { label: "Super Listeners", color: "#1ed760" },
-};
-
-const followersConfig = {
-  followers: { label: "Followers", color: "#1db954" },
 };
 
 const dateFormatter = (value) =>
@@ -28,11 +23,11 @@ export default function SpotifyAudiencePage() {
 
   const metrics = [
     {
-      title: "Followers",
-      value: formatNumber(data.summary.currentFollowers),
-      change: data.summary.currentFollowersChange,
+      title: "Followers Gained",
+      value: formatNumber(data.summary.totalFollowersGained),
+      change: data.summary.totalFollowersGainedChange,
       changeLabel: "vs prev period",
-      icon: Users,
+      icon: UserPlus,
     },
     {
       title: "Monthly Listeners",
@@ -63,11 +58,6 @@ export default function SpotifyAudiencePage() {
     super_listeners: d.super_listeners,
   }));
 
-  const followersData = data.daily.map((d) => ({
-    date: d.date,
-    followers: d.followers,
-  }));
-
   return (
     <div className="space-y-4">
       <MetricCardGrid metrics={metrics} />
@@ -80,16 +70,7 @@ export default function SpotifyAudiencePage() {
         dataKeys={["monthly_active_listeners", "super_listeners"]}
         xAxisKey="date"
         xAxisFormatter={dateFormatter}
-      />
-
-      <AreaChartCard
-        title="Follower Growth"
-        description="Total followers over time"
-        data={followersData}
-        chartConfig={followersConfig}
-        dataKeys={["followers"]}
-        xAxisKey="date"
-        xAxisFormatter={dateFormatter}
+        showLegend
       />
     </div>
   );

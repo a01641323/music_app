@@ -1,16 +1,16 @@
 "use client";
 
 import { useMemo } from "react";
-import { Users, Play, Heart, UserPlus } from "lucide-react";
+import { Play, Heart, Share2, UserPlus } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getTikTokMetrics } from "@/services/tiktok";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
 import { AreaChartCard } from "@/components/charts/area-chart-card";
-import { LineChartCard } from "@/components/charts/line-chart-card";
+import { BarChartCard } from "@/components/charts/bar-chart-card";
 import { formatNumber } from "@/lib/format";
 
-const followerConfig = {
-  follower_count: { label: "Followers", color: "#25f4ee" },
+const followersGainedConfig = {
+  followers_gained: { label: "Followers Gained", color: "#25f4ee" },
 };
 
 const playsConfig = {
@@ -32,11 +32,11 @@ export default function TikTokOverviewPage() {
 
   const metrics = [
     {
-      title: "Followers",
-      value: formatNumber(data.summary.currentFollowers),
-      change: data.summary.currentFollowersChange,
+      title: "Followers Gained",
+      value: formatNumber(data.summary.totalFollowersGained),
+      change: data.summary.totalFollowersGainedChange,
       changeLabel: "vs prev period",
-      icon: Users,
+      icon: UserPlus,
     },
     {
       title: "Total Plays",
@@ -53,17 +53,17 @@ export default function TikTokOverviewPage() {
       icon: Heart,
     },
     {
-      title: "Followers Gained",
-      value: formatNumber(data.summary.totalFollowersGained),
-      change: data.summary.totalFollowersGainedChange,
+      title: "Total Shares",
+      value: formatNumber(data.summary.totalShares),
+      change: data.summary.totalSharesChange,
       changeLabel: "vs prev period",
-      icon: UserPlus,
+      icon: Share2,
     },
   ];
 
-  const followerData = data.daily.map((d) => ({
+  const followersGainedData = data.daily.map((d) => ({
     date: d.date,
-    follower_count: d.follower_count,
+    followers_gained: d.followers_gained,
   }));
 
   const playsData = data.daily.map((d) => ({
@@ -82,14 +82,15 @@ export default function TikTokOverviewPage() {
       <MetricCardGrid metrics={metrics} />
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <AreaChartCard
-          title="Follower Growth"
-          description="Total followers over time"
-          data={followerData}
-          chartConfig={followerConfig}
-          dataKeys={["follower_count"]}
+        <BarChartCard
+          title="Daily Followers Gained"
+          description="Net new followers per day"
+          data={followersGainedData}
+          chartConfig={followersGainedConfig}
+          dataKeys={["followers_gained"]}
           xAxisKey="date"
           xAxisFormatter={dateFormatter}
+          showLegend={false}
         />
         <AreaChartCard
           title="Daily Plays"
@@ -102,14 +103,15 @@ export default function TikTokOverviewPage() {
         />
       </div>
 
-      <LineChartCard
-        title="Engagement Over Time"
+      <AreaChartCard
+        title="Likes & Shares"
         description="Daily likes and shares"
         data={engagementData}
         chartConfig={engagementConfig}
         dataKeys={["like_count", "share_count"]}
         xAxisKey="date"
         xAxisFormatter={dateFormatter}
+        showLegend
       />
     </div>
   );

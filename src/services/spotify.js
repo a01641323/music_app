@@ -26,18 +26,26 @@ function percentageChange(current, previous) {
   return Math.round(((current - previous) / Math.abs(previous)) * 100 * 10) / 10;
 }
 
+// Pre-compute followers_gained (day-over-day diff) across the full dataset.
+// followers is cumulative in the CSV, so we diff consecutive rows.
+const allDailyWithGained = accountMetricsDaily.map((d, i) => ({
+  ...d,
+  followers_gained: i === 0 ? 0 : d.followers - accountMetricsDaily[i - 1].followers,
+}));
+
 /**
  * Get Spotify account metrics filtered to a date range.
  * Fields from CSV: listeners, monthly_listeners, monthly_active_listeners,
  * super_listeners, streams, playlist_adds, saves, followers.
+ * Computed: followers_gained (day-over-day diff of cumulative followers).
  */
 export function getSpotifyMetrics({ from, to }) {
-  const daily = accountMetricsDaily.filter((entry) =>
+  const daily = allDailyWithGained.filter((entry) =>
     isInRange(entry.date, from, to)
   );
 
   const { prevFrom, prevTo } = getPreviousPeriod(from, to);
-  const previousDaily = accountMetricsDaily.filter((entry) =>
+  const previousDaily = allDailyWithGained.filter((entry) =>
     isInRange(entry.date, prevFrom, prevTo)
   );
 
@@ -45,12 +53,10 @@ export function getSpotifyMetrics({ from, to }) {
   const last = daily.length > 0 ? daily[daily.length - 1] : {};
   const prevLast = previousDaily.length > 0 ? previousDaily[previousDaily.length - 1] : {};
 
-  const currentFollowers = last.followers ?? 0;
   const currentMonthlyListeners = last.monthly_listeners ?? 0;
   const currentMonthlyActive = last.monthly_active_listeners ?? 0;
   const currentSuperListeners = last.super_listeners ?? 0;
 
-  const prevFollowers = prevLast.followers ?? 0;
   const prevMonthlyListeners = prevLast.monthly_listeners ?? 0;
   const prevMonthlyActive = prevLast.monthly_active_listeners ?? 0;
   const prevSuperListeners = prevLast.super_listeners ?? 0;
@@ -59,16 +65,18 @@ export function getSpotifyMetrics({ from, to }) {
   const totalStreams = daily.reduce((sum, d) => sum + d.streams, 0);
   const totalSaves = daily.reduce((sum, d) => sum + d.saves, 0);
   const totalPlaylistAdds = daily.reduce((sum, d) => sum + d.playlist_adds, 0);
+  const totalFollowersGained = daily.reduce((sum, d) => sum + d.followers_gained, 0);
 
   const prevTotalStreams = previousDaily.reduce((sum, d) => sum + d.streams, 0);
   const prevTotalSaves = previousDaily.reduce((sum, d) => sum + d.saves, 0);
   const prevTotalPlaylistAdds = previousDaily.reduce((sum, d) => sum + d.playlist_adds, 0);
+  const prevTotalFollowersGained = previousDaily.reduce((sum, d) => sum + d.followers_gained, 0);
 
   return {
     daily,
     summary: {
-      currentFollowers,
-      currentFollowersChange: percentageChange(currentFollowers, prevFollowers),
+      totalFollowersGained,
+      totalFollowersGainedChange: percentageChange(totalFollowersGained, prevTotalFollowersGained),
       currentMonthlyListeners,
       currentMonthlyListenersChange: percentageChange(currentMonthlyListeners, prevMonthlyListeners),
       currentMonthlyActive,

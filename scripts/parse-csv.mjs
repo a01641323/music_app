@@ -21,6 +21,7 @@ function readCSV(path, options = {}) {
   return Papa.parse(raw, {
     header: true,
     skipEmptyLines: true,
+    encoding: "UTF-8",
     ...options,
   }).data;
 }
@@ -78,7 +79,7 @@ function readAudienceCSV(path) {
   const lines = raw.split("\n").filter((l) => l.trim());
   // Line 0: title (skip), Line 1: real headers, Line 2+: data
   const withoutTitle = lines.slice(1).join("\n");
-  return Papa.parse(withoutTitle, { header: true, skipEmptyLines: true }).data;
+  return Papa.parse(withoutTitle, { header: true, skipEmptyLines: true, encoding: "UTF-8" }).data;
 }
 
 const paisesRaw = readAudienceCSV(resolve(DATA_CLEAN, "instagram/paises.csv"));

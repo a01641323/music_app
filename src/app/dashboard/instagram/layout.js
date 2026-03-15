@@ -12,11 +12,13 @@ const tabs = [
 export default function InstagramLayout({ children }) {
   return (
     <DateRangeProvider>
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-2">
-        <PlatformTabNavigation tabs={tabs} platformId="instagram" />
-        <DateRangeFilter />
+      <div data-platform="instagram">
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-2">
+          <PlatformTabNavigation tabs={tabs} platformId="instagram" />
+          <DateRangeFilter />
+        </div>
+        <div className="p-4">{children}</div>
       </div>
-      <div className="p-4">{children}</div>
     </DateRangeProvider>
   );
 }

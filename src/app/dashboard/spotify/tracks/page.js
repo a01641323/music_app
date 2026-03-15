@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Music, Headphones, Star, Calendar } from "lucide-react";
+import { Music, Star, Calendar } from "lucide-react";
 import { useDateRange } from "@/context/date-range-context";
 import { getSpotifyTracks } from "@/services/spotify";
 import { MetricCardGrid } from "@/components/metrics/metric-card-grid";
@@ -42,11 +42,6 @@ export default function SpotifyTracksPage() {
 
   const data = useMemo(() => getSpotifyTracks(dateRange), [dateRange]);
 
-  const totalStreams = useMemo(
-    () => data.totals.reduce((sum, t) => sum + t.streams, 0),
-    [data.totals]
-  );
-
   const metrics = [
     {
       title: "Tracks",
@@ -54,13 +49,6 @@ export default function SpotifyTracksPage() {
       change: null,
       changeLabel: "total catalog",
       icon: Music,
-    },
-    {
-      title: "Total Streams",
-      value: formatNumber(totalStreams),
-      change: null,
-      changeLabel: "in selected period",
-      icon: Headphones,
     },
     {
       title: "Top Track",

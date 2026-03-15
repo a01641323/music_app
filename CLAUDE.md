@@ -43,45 +43,44 @@ src/app/layout.js                → Root layout. DM Mono + Playfair Display fon
 src/app/page.js                  → Redirects / → /dashboard/instagram.
 src/app/globals.css              → ALL global styles: Tailwind, @theme inline, Crown Emerald palette,
                                    html::before/::after background, glassmorphism (.glass/.glass-hover/.glass-glow),
-                                   TikTok/Spotify scoped palettes ([data-platform="tiktok/spotify"]),
+                                   Instagram/TikTok/Spotify scoped palettes ([data-platform="instagram/tiktok/spotify"]),
                                    scrollbar-none, equalizer animation keyframes, ambient orb keyframes.
 src/app/dashboard/layout.js      → Shell: AppSidebar + SidebarInset (bg-transparent).
 
 src/app/dashboard/instagram/layout.js         → DateRangeProvider + PlatformTabNavigation (2 tabs) + DateRangeFilter.
+                                                data-platform="instagram".
 src/app/dashboard/instagram/page.js           → Redirects → /dashboard/instagram/overview.
 src/app/dashboard/instagram/overview/page.js  → Followers Gained, Reach, Reel Views, Profile Views cards
                                                 + Reach vs Reel Views area chart + Daily Followers Gained bar
                                                 + Website Clicks line chart.
-src/app/dashboard/instagram/audience/page.js  → Followers Gained, Accounts Engaged cards
-                                                + Age & Gender bar + Countries bar + Cities bar
-                                                + Daily Followers Gained area.
+src/app/dashboard/instagram/audience/page.js  → Accounts Engaged card
+                                                + Age & Gender bar + Countries bar + Cities bar.
 src/app/dashboard/instagram/posts/page.js     → redirect → overview (no CSV data).
 src/app/dashboard/instagram/reels/page.js     → redirect → overview (no CSV data).
 src/app/dashboard/instagram/stories/page.js   → redirect → overview (no CSV data).
 
-src/app/dashboard/tiktok/layout.js            → DateRangeProvider + PlatformTabNavigation (3 tabs) + DateRangeFilter.
+src/app/dashboard/tiktok/layout.js            → DateRangeProvider + PlatformTabNavigation (2 tabs) + DateRangeFilter.
                                                 data-platform="tiktok".
 src/app/dashboard/tiktok/page.js              → Redirects → /dashboard/tiktok/overview.
-src/app/dashboard/tiktok/overview/page.js     → Followers, Total Plays, Total Likes, Followers Gained cards
-                                                + Follower Growth area + Daily Plays area + Engagement line.
-src/app/dashboard/tiktok/performance/page.js  → Total Plays, Likes, Shares, Followers Gained cards
-                                                + Daily Plays area + Likes & Shares area.
-src/app/dashboard/tiktok/audience/page.js     → Followers, Followers Gained, New Viewers cards
+src/app/dashboard/tiktok/overview/page.js     → Followers Gained, Total Plays, Total Likes, Total Shares cards
+                                                + Daily Followers Gained bar + Daily Plays area + Likes & Shares area.
+src/app/dashboard/tiktok/performance/page.js  → redirect → overview (merged into Overview).
+src/app/dashboard/tiktok/audience/page.js     → New Viewers card
                                                 + Audience by Country bar + Gender Distribution bar
-                                                + Active Hours bar (24h) + Follower Growth area.
+                                                + Active Hours bar (24h).
 src/app/dashboard/tiktok/retention/page.js    → redirect → overview (no watch_time CSV data).
 
 src/app/dashboard/spotify/layout.js           → DateRangeProvider + PlatformTabNavigation (3 tabs) + DateRangeFilter.
                                                 data-platform="spotify".
 src/app/dashboard/spotify/page.js             → Redirects → /dashboard/spotify/overview.
-src/app/dashboard/spotify/overview/page.js    → Followers, Monthly Listeners, Total Streams, Saves cards
+src/app/dashboard/spotify/overview/page.js    → Followers Gained, Monthly Listeners, Total Streams, Saves cards
                                                 + Monthly Listeners area + Daily Streams area
-                                                + Saves & Playlist Adds line + Active vs Super Listeners line.
-src/app/dashboard/spotify/tracks/page.js      → Tracks, Total Streams, Top Track, Days with Data cards
+                                                + Saves & Playlist Adds line + Daily Followers Gained bar.
+src/app/dashboard/spotify/tracks/page.js      → Tracks, Top Track, Days with Data cards
                                                 + Streams by Track horizontal bar (totals)
                                                 + Streams Over Time multi-line (8 tracks, CSS-safe keys).
-src/app/dashboard/spotify/audience/page.js    → Followers, Monthly Listeners, Active Listeners, Super Listeners cards
-                                                + Active vs Super Listeners line + Follower Growth area.
+src/app/dashboard/spotify/audience/page.js    → Followers Gained, Monthly Listeners, Active Listeners, Super Listeners cards
+                                                + Active vs Super Listeners line.
 src/app/dashboard/spotify/playlists/page.js   → redirect → overview (no CSV data).
 ```
 
@@ -118,7 +117,7 @@ src/components/ui/                             → shadcn/ui v4 primitives. Do n
 ```
 src/data/platforms.js                → Platform registry (id, name, icon, sections[]). Drives sidebar nav.
                                        Instagram: [overview, audience]
-                                       TikTok:    [overview, performance, audience]
+                                       TikTok:    [overview, audience]
                                        Spotify:   [overview, tracks, audience]
 
 src/data/instagram/index.js          → Barrel: exports instagramDaily as accountMetricsDaily,
@@ -160,10 +159,11 @@ src/services/instagram.js    → getAccountMetrics({from,to}), getAudienceData()
                                totalFollowersGained, totalAccountsEngaged, totalWebsiteClicks (all with Change).
 src/services/tiktok.js       → getTikTokMetrics({from,to}), getTikTokAudience().
                                Uses last non-zero follower_count (0 = NA in CSV).
-                               Summary: currentFollowers, totalPlayCount, totalLikes, totalShares,
+                               Summary: totalPlayCount, totalLikes, totalShares,
                                totalFollowersGained, totalViewersNew, totalViewersTotal (with Change).
 src/services/spotify.js      → getSpotifyMetrics({from,to}), getSpotifyTracks({from,to}).
-                               getSpotifyMetrics summary: currentFollowers, currentMonthlyListeners,
+                               Pre-computes followers_gained (day-over-day diff of cumulative followers).
+                               getSpotifyMetrics summary: totalFollowersGained, currentMonthlyListeners,
                                currentMonthlyActive, currentSuperListeners, totalStreams, totalSaves,
                                totalPlaylistAdds (all with Change).
                                getSpotifyTracks returns: { timeline[], totals[], trackNames[] }
@@ -253,7 +253,7 @@ DateRangeProvider
        ├─ DateRangeFilter
        └─ children
 ```
-Instagram omits `data-platform` (uses its own CSS variables without scoping).
+All 3 platforms use `data-platform` for scoped tab CSS. Instagram uses `#00c896`/`#00ffbe` green palette.
 
 ### shadcn/ui v4 — IMPORTANT GOTCHA
 Uses `@base-ui/react`, not Radix. `asChild` does NOT exist. Use `render` prop:

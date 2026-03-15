@@ -17,7 +17,6 @@ export const platforms = [
     connected: true,
     sections: [
       { name: "Overview", path: "overview", icon: "LayoutDashboard" },
-      { name: "Performance", path: "performance", icon: "TrendingUp" },
       // Retention removed — no watch_time data in CSV
       { name: "Audience", path: "audience", icon: "Users" },
     ],
