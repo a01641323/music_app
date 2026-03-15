@@ -9,7 +9,17 @@
       "Bash(npx shadcn@latest add sidebar card calendar popover select dropdown-menu badge avatar separator skeleton table tooltip chart toggle-group scroll-area -y)",
       "Bash(npm install recharts date-fns lucide-react)",
       "mcp__Claude_Preview__preview_start",
-      "Bash(npm install)"
+      "Bash(npm install)",
+      "Bash(npm install react-countup react-type-animation)",
+      "Bash(npm run build)",
+      "Bash(git add src/app/dashboard/layout.js src/app/globals.css src/app/layout.js src/components/charts/area-chart-card.jsx src/components/charts/bar-chart-card.jsx src/components/charts/heatmap-chart.jsx src/components/charts/line-chart-card.jsx src/components/charts/pie-chart-card.jsx src/components/layout/date-range-filter.jsx src/components/layout/nav-main.jsx src/components/layout/tab-navigation.jsx src/components/metrics/metric-card.jsx src/components/ui/chart.jsx src/components/ui/sidebar.jsx src/components/layout/background-ambient.jsx src/components/layout/equalizer-bars.jsx public/crown.jpg docs/ package.json package-lock.json)",
+      "Bash(git commit:*)",
+      "Bash(git push origin main)",
+      "Bash(git add src/app/globals.css src/components/layout/nav-main.jsx src/components/layout/platform-switcher.jsx src/components/layout/platform-tab-navigation.jsx src/components/metrics/metric-card.jsx src/components/metrics/trend-indicator.jsx src/data/platforms.js src/data/tiktok/ src/data/spotify/ src/services/tiktok.js src/services/spotify.js src/app/dashboard/tiktok/ src/app/dashboard/spotify/)",
+      "Bash(npm install papaparse --save)",
+      "Bash(node scripts/parse-csv.mjs)",
+      "Bash(node -e \":*)",
+      "Bash(git add CLAUDE.md package.json package-lock.json scripts/ data_clean/ src/data/instagram/index.js src/data/instagram/real-data.js src/data/tiktok/index.js src/data/tiktok/real-data.js src/data/spotify/index.js src/data/spotify/real-data.js src/data/platforms.js src/services/instagram.js src/services/tiktok.js src/services/spotify.js src/components/charts/line-chart-card.jsx src/app/dashboard/instagram/layout.js src/app/dashboard/instagram/overview/page.js src/app/dashboard/instagram/audience/page.js src/app/dashboard/instagram/posts/page.js src/app/dashboard/instagram/reels/page.js src/app/dashboard/instagram/stories/page.js src/app/dashboard/tiktok/layout.js src/app/dashboard/tiktok/overview/page.js src/app/dashboard/tiktok/performance/page.js src/app/dashboard/tiktok/audience/page.js src/app/dashboard/tiktok/retention/page.js src/app/dashboard/spotify/layout.js src/app/dashboard/spotify/overview/page.js src/app/dashboard/spotify/tracks/page.js src/app/dashboard/spotify/audience/page.js src/app/dashboard/spotify/playlists/page.js)"
     ]
   }
 }

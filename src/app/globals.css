@@ -287,24 +287,24 @@
 
 /* === INSTAGRAM PLATFORM PALETTE === */
 [data-platform="instagram"] {
-  --platform-primary: #00c896;
-  --platform-secondary: #00ffbe;
-  --platform-accent: #0a0f1e;
+  --platform-primary: #E1306C;
+  --platform-secondary: #833AB4;
+  --platform-accent: #FCAF45;
 }
 
 [data-platform="instagram"] .tab-active {
-  background: linear-gradient(135deg, #00c89622, #00ffbe22);
-  color: #00ffbe;
-  border: 1px solid rgba(0, 200, 150, 0.4);
-  text-shadow: 0 0 12px rgba(0, 255, 190, 0.5);
+  background: linear-gradient(135deg, #833AB422, #E1306C22);
+  color: #E1306C;
+  border: 1px solid rgba(225, 48, 108, 0.4);
+  text-shadow: 0 0 12px rgba(131, 58, 180, 0.5);
 }
 
 [data-platform="instagram"] .tab-inactive {
-  color: rgba(0, 200, 150, 0.5);
+  color: rgba(225, 48, 108, 0.5);
   border: 1px solid transparent;
 }
 
 [data-platform="instagram"] .tab-inactive:hover {
-  color: #00ffbe;
-  background: rgba(0, 200, 150, 0.06);
+  color: #833AB4;
+  background: rgba(225, 48, 108, 0.06);
 }
